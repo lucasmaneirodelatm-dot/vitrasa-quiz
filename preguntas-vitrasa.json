@@ -1,0 +1,15 @@
+{
+  "quiz": [
+    {
+      "question": "¿Pregunta de opción múltiple?",
+      "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
+      "correct": 0
+    }
+  ],
+  "truefalse": [
+    {
+      "question": "¿Afirmación verdadera o falsa?",
+      "correct": true
+    }
+  ]
+}
