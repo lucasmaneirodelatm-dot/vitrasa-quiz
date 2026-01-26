@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vitrasa Quiz Multijuego</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
+    
+    @keyframes spin-wheel {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(var(--final-rotation)); }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 150, 136, 0.4); }
+      50% { box-shadow: 0 0 40px rgba(0, 150, 136, 0.8); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+    }
+    
+    .wheel-spin {
+      animation: spin-wheel 4s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+    }
+    
+    .glow-pulse {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    .float-anim {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .confetti-piece {
+      animation: confetti 1.5s ease-out forwards;
+    }
+    
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+    
+    .option-btn:hover:not(:disabled) {
+      transform: scale(1.03);
+    }
+    
+    .progress-fill {
+      transition: width 0.5s ease-out;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white overflow-auto">
+  <div id="app" class="min-h-full w-full"><!-- Pantalla Principal -->
+   <div id="main-menu" class="min-h-full flex flex-col items-center justify-center p-6">
+    <div class="text-center mb-12">
+     <div class="inline-block mb-6">
+      <svg class="w-24 h-24 mx-auto float-anim" viewbox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#009688" opacity="0.2" /> <circle cx="50" cy="50" r="35" fill="#009688" opacity="0.4" /> <circle cx="50" cy="50" r="25" fill="#009688" /> <path d="M35 50 L45 60 L65 40" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+     </div>
+     <h1 id="main-title" class="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent mb-4">Vitrasa Quiz</h1>
+     <p id="subtitle" class="text-xl text-slate-300 font-light">¡Demuestra cuánto sabes sobre el transporte urbano de Vigo!</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl w-full mb-12"><!-- Quiz Clásico --> <button onclick="startGame('quiz')" class="game-card bg-gradient-to-br from-emerald-600 to-emerald-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Quiz Clásico</h3><p class="text-emerald-200 text-sm">Responde preguntas de opción múltiple</p></button> <!-- Verdadero o Falso --> <button onclick="startGame('truefalse')" class="game-card bg-gradient-to-br from-cyan-600 to-cyan-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Verdadero o Falso</h3><p class="text-cyan-200 text-sm">¿Verdad o mentira? Tú decides</p></button> <!-- Ruleta --> <button onclick="startGame('wheel')" class="game-card bg-gradient-to-br from-amber-600 to-orange-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /> <circle cx="12" cy="12" r="3" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Ruleta de Preguntas</h3><p class="text-amber-200 text-sm">Gira y responde al azar</p></button> <!-- Contrarreloj --> <button onclick="startGame('speed')" class="game-card bg-gradient-to-br from-rose-600 to-pink-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-rose-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Contrarreloj</h3><p class="text-rose-200 text-sm">¡Responde antes de que acabe el tiempo!</p></button>
+    </div><!-- Botones Admin y Estadísticas -->
+    <div class="flex gap-4 flex-wrap justify-center"><button onclick="showAdmin()" class="px-6 py-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl transition-all flex items-center gap-2 border border-slate-600">
+      <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+      </svg> Panel Admin </button> <button onclick="showStats()" class="px-6 py-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl transition-all flex items-center gap-2 border border-slate-600">
+      <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+      </svg> Estadísticas </button>
+    </div>
+   </div><!-- Pantalla de Juego -->
+   <div id="game-screen" class="hidden min-h-full flex flex-col p-6"><!-- Header del juego -->
+    <div class="flex items-center justify-between mb-6"><button onclick="backToMenu()" class="p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl transition-all">
+      <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+      </svg></button>
+     <div class="text-center">
+      <h2 id="game-type-title" class="text-2xl font-bold text-emerald-400">Quiz Clásico</h2>
+      <p id="question-counter" class="text-slate-400">Pregunta 1 de 10</p>
+     </div>
+     <div class="text-right">
+      <p class="text-sm text-slate-400">Puntuación</p>
+      <p id="current-score" class="text-2xl font-bold text-emerald-400">0</p>
+     </div>
+    </div><!-- Barra de progreso -->
+    <div class="w-full h-2 bg-slate-700 rounded-full mb-6 overflow-hidden">
+     <div id="progress-bar" class="progress-fill h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" style="width: 0%"></div>
+    </div><!-- Timer para contrarreloj -->
+    <div id="timer-container" class="hidden mb-6">
+     <div class="flex items-center justify-center gap-4">
+      <div class="relative w-20 h-20">
+       <svg class="w-20 h-20 transform -rotate-90"><circle cx="40" cy="40" r="36" fill="none" stroke="#334155" stroke-width="6" /> <circle id="timer-circle" cx="40" cy="40" r="36" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="0" />
+       </svg><span id="timer-text" class="absolute inset-0 flex items-center justify-center text-2xl font-bold">10</span>
+      </div>
+     </div>
+    </div><!-- Contenedor de Ruleta -->
+    <div id="wheel-container" class="hidden flex flex-col items-center justify-center flex-1">
+     <div class="relative mb-8">
+      <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+       <svg class="w-8 h-8 text-white drop-shadow-lg" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2L8 10h8L12 2z" />
+       </svg>
+      </div>
+      <svg id="wheel" class="w-72 h-72 md:w-96 md:h-96" viewbox="0 0 400 400"><!-- Segmentos de la ruleta -->
+      </svg>
+     </div><button id="spin-btn" onclick="spinWheel()" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 rounded-2xl text-xl font-bold transition-all transform hover:scale-105 glow-pulse"> 🎰 ¡Girar Ruleta! </button>
+    </div><!-- Contenedor de Pregunta -->
+    <div id="question-container" class="flex-1 flex flex-col">
+     <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-8 mb-6 border border-slate-700">
+      <p id="question-text" class="text-xl md:text-2xl font-medium text-center leading-relaxed"></p>
+     </div><!-- Opciones Quiz -->
+     <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+     </div><!-- Opciones V/F -->
+     <div id="tf-options" class="hidden flex justify-center gap-6"><button onclick="answerTF(true)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-2xl text-2xl font-bold transition-all transform"> ✓ Verdadero </button> <button onclick="answerTF(false)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 rounded-2xl text-2xl font-bold transition-all transform"> ✗ Falso </button>
+     </div>
+    </div><!-- Feedback -->
+    <div id="feedback-container" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6">
+     <div id="feedback-box" class="bg-slate-800 rounded-3xl p-8 text-center max-w-md w-full transform transition-all">
+      <div id="feedback-icon" class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center text-4xl"></div>
+      <h3 id="feedback-title" class="text-2xl font-bold mb-2"></h3>
+      <p id="feedback-text" class="text-slate-300 mb-6"></p><button onclick="nextQuestion()" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-semibold transition-all"> Continuar </button>
+     </div>
+    </div>
+   </div><!-- Pantalla de Resultados -->
+   <div id="results-screen" class="hidden min-h-full flex flex-col items-center justify-center p-6">
+    <div class="bg-slate-800/50 backdrop-blur rounded-3xl p-8 md:p-12 text-center max-w-lg w-full border border-slate-700">
+     <div id="results-icon" class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center text-5xl float-anim"></div>
+     <h2 class="text-3xl font-bold mb-2">¡Partida Terminada!</h2>
+     <p id="results-game-type" class="text-emerald-400 mb-6"></p>
+     <div class="grid grid-cols-2 gap-4 mb-8">
+      <div class="bg-slate-700/50 rounded-xl p-4">
+       <p class="text-3xl font-bold text-emerald-400" id="final-score">0</p>
+       <p class="text-sm text-slate-400">Puntuación</p>
+      </div>
+      <div class="bg-slate-700/50 rounded-xl p-4">
+       <p class="text-3xl font-bold text-cyan-400" id="correct-count">0/0</p>
+       <p class="text-sm text-slate-400">Aciertos</p>
+      </div>
+     </div>
+     <div class="flex flex-col gap-3"><button onclick="restartGame()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-xl font-semibold transition-all"> 🔄 Jugar de Nuevo </button> <button onclick="backToMenu()" class="w-full py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold transition-all"> 🏠 Volver al Menú </button>
+     </div>
+    </div>
+   </div><!-- Panel Admin -->
+   <div id="admin-screen" class="hidden min-h-full p-6">
+    <div class="max-w-4xl mx-auto">
+     <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-emerald-400">Panel de Administración</h2><button onclick="backToMenu()" class="p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl transition-all">
+       <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+       </svg></button>
+     </div><!-- Cargar JSON desde URL -->
+     <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 mb-6 border border-slate-700">
+      <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6 text-cyan-400" fill="currentColor" viewbox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" />
+       </svg> Cargar Preguntas desde URL</h3>
+      <div class="flex gap-3"><input type="text" id="json-url" placeholder="https://ejemplo.com/preguntas.json" class="flex-1 px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl focus:outline-none focus:border-emerald-500 transition-colors"> <button onclick="loadFromURL()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 rounded-xl font-semibold transition-all flex items-center gap-2">
+        <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+        </svg> Cargar </button>
+      </div>
+      <p id="load-status" class="mt-3 text-sm text-slate-400"></p>
+     </div><!-- Descargar Plantilla -->
+     <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 mb-6 border border-slate-700">
+      <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6 text-amber-400" fill="currentColor" viewbox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+       </svg> Descargar Plantilla JSON</h3>
+      <p class="text-slate-400 mb-4">Descarga una plantilla con el formato correcto para las preguntas.</p><button onclick="downloadTemplate()" class="px-6 py-3 bg-amber-600 hover:bg-amber-500 rounded-xl font-semibold transition-all flex items-center gap-2">
+       <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+       </svg> Descargar Plantilla </button>
+     </div><!-- Estructura del JSON -->
+     <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 border border-slate-700">
+      <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6 text-emerald-400" fill="currentColor" viewbox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
+       </svg> Estructura del JSON</h3>
+      <pre class="bg-slate-900 rounded-xl p-4 overflow-x-auto text-sm"><code class="text-emerald-300">{
+  "quiz": [
+    {
+      "question": "¿Pregunta de opción múltiple?",
+      "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
+      "correct": 0
+    }
+  ],
+  "truefalse": [
+    {
+      "question": "¿Afirmación verdadera o falsa?",
+      "correct": true
+    }
+  ]
+}</code></pre>
+     </div>
+    </div>
+   </div><!-- Pantalla de Estadísticas -->
+   <div id="stats-screen" class="hidden min-h-full p-6">
+    <div class="max-w-4xl mx-auto">
+     <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-emerald-400">Estadísticas</h2><button onclick="backToMenu()" class="p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl transition-all">
+       <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+       </svg></button>
+     </div>
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 border border-slate-700 text-center">
+       <p id="total-games" class="text-4xl font-bold text-emerald-400">0</p>
+       <p class="text-slate-400">Partidas Jugadas</p>
+      </div>
+      <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 border border-slate-700 text-center">
+       <p id="total-score" class="text-4xl font-bold text-cyan-400">0</p>
+       <p class="text-slate-400">Puntos Totales</p>
+      </div>
+      <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 border border-slate-700 text-center">
+       <p id="avg-score" class="text-4xl font-bold text-amber-400">0</p>
+       <p class="text-slate-400">Media por Partida</p>
+      </div>
+      <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 border border-slate-700 text-center">
+       <p id="accuracy" class="text-4xl font-bold text-rose-400">0%</p>
+       <p class="text-slate-400">Precisión</p>
+      </div>
+     </div>
+     <div class="bg-slate-800/50 backdrop-blur rounded-2xl p-6 border border-slate-700">
+      <h3 class="text-xl font-semibold mb-4">Historial de Partidas</h3>
+      <div id="history-list" class="space-y-3 max-h-96 overflow-y-auto">
+       <p class="text-slate-400 text-center py-8">No hay partidas registradas aún</p>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Configuración por defecto
+    const defaultConfig = {
+      main_title: 'Vitrasa Quiz',
+      subtitle: '¡Demuestra cuánto sabes sobre el transporte urbano de Vigo!',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f1f5f9',
+      primary_action_color: '#059669',
+      secondary_action_color: '#0891b2'
+    };
+    
+    let config = { ...defaultConfig };
+    let gameHistory = [];
+    
+    // URL del JSON con las preguntas - CAMBIA ESTA URL POR LA TUYA
+    const QUESTIONS_JSON_URL = 'https://tu-servidor.com/preguntas-vitrasa.json';
+    
+    // Preguntas por defecto (se usan si falla la carga desde la URL)
+    let questionsData = {
+      quiz: [
+        {
+          question: "¿En qué año se fundó Vitrasa?",
+          options: ["1978", "1982", "1989", "1995"],
+          correct: 1
+        },
+        {
+          question: "¿Cuántas líneas de autobús tiene aproximadamente Vitrasa?",
+          options: ["10-15", "15-20", "20-25", "Más de 25"],
+          correct: 2
+        },
+        {
+          question: "¿Qué significan las siglas VITRASA?",
+          options: ["Vigo Transportes SA", "Vigo Tráfico SA", "Viajes Transporte SA", "Viguesa de Transportes SA"],
+          correct: 0
+        },
+        {
+          question: "¿Cuál es el color corporativo principal de los autobuses Vitrasa?",
+          options: ["Azul", "Verde", "Rojo", "Amarillo"],
+          correct: 1
+        },
+        {
+          question: "¿Qué tarjeta se utiliza para pagar en Vitrasa?",
+          options: ["Tarjeta Bus", "Tarjeta Pass", "Tarjeta Móvil", "Todas las anteriores"],
+          correct: 3
+        }
+      ],
+      truefalse: [
+        {
+          question: "Vitrasa opera únicamente en el municipio de Vigo",
+          correct: false
+        },
+        {
+          question: "Los autobuses de Vitrasa funcionan también en días festivos",
+          correct: true
+        },
+        {
+          question: "Vitrasa tiene servicio de autobús nocturno",
+          correct: true
+        },
+        {
+          question: "La tarifa de Vitrasa es igual para todos los trayectos dentro de la ciudad",
+          correct: true
+        },
+        {
+          question: "Vitrasa dispone de autobuses adaptados para personas con movilidad reducida",
+          correct: true
+        }
+      ]
+    };
+    
+    // Estado del juego
+    let currentGame = {
+      type: null,
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      correctAnswers: 0,
+      timer: null,
+      timeLeft: 10
+    };
+    
+    // Inicializar SDK de elementos
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (newConfig) => {
+        config = { ...config, ...newConfig };
+        applyConfig();
+      },
+      mapToCapabilities: (cfg) => ({
+        recolorables: [
+          {
+            get: () => cfg.background_color || defaultConfig.background_color,
+            set: (v) => window.elementSdk.setConfig({ background_color: v })
+          },
+          {
+            get: () => cfg.surface_color || defaultConfig.surface_color,
+            set: (v) => window.elementSdk.setConfig({ surface_color: v })
+          },
+          {
+            get: () => cfg.text_color || defaultConfig.text_color,
+            set: (v) => window.elementSdk.setConfig({ text_color: v })
+          },
+          {
+            get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+            set: (v) => window.elementSdk.setConfig({ primary_action_color: v })
+          },
+          {
+            get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (v) => window.elementSdk.setConfig({ secondary_action_color: v })
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      }),
+      mapToEditPanelValues: (cfg) => new Map([
+        ['main_title', cfg.main_title || defaultConfig.main_title],
+        ['subtitle', cfg.subtitle || defaultConfig.subtitle]
+      ])
+    });
+    
+    // Inicializar Data SDK
+    const dataHandler = {
+      onDataChanged(data) {
+        gameHistory = data;
+        updateStatsDisplay();
+      }
+    };
+    
+    window.dataSdk.init(dataHandler);
+    
+    // Cargar preguntas desde la URL al iniciar
+    async function loadQuestionsFromURL() {
+      try {
+        const response = await fetch(QUESTIONS_JSON_URL);
+        if (!response.ok) {
+          console.log('No se pudo cargar desde la URL, usando preguntas por defecto');
+          return;
+        }
+        
+        const data = await response.json();
+        
+        if (data.quiz && Array.isArray(data.quiz)) {
+          questionsData.quiz = data.quiz;
+        }
+        if (data.truefalse && Array.isArray(data.truefalse)) {
+          questionsData.truefalse = data.truefalse;
+        }
+        
+        console.log(`✅ Preguntas cargadas desde URL: ${questionsData.quiz.length} quiz, ${questionsData.truefalse.length} V/F`);
+      } catch (error) {
+        console.log('Error al cargar desde URL, usando preguntas por defecto:', error.message);
+      }
+    }
+    
+    // Cargar preguntas al iniciar
+    loadQuestionsFromURL();
+    
+    function applyConfig() {
+      document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+      document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+    }
+    
+    function updateStatsDisplay() {
+      const totalGames = gameHistory.length;
+      const totalScore = gameHistory.reduce((sum, g) => sum + (g.score || 0), 0);
+      const totalCorrect = gameHistory.reduce((sum, g) => sum + (g.correct_answers || 0), 0);
+      const totalQuestions = gameHistory.reduce((sum, g) => sum + (g.total_questions || 0), 0);
+      
+      document.getElementById('total-games').textContent = totalGames;
+      document.getElementById('total-score').textContent = totalScore;
+      document.getElementById('avg-score').textContent = totalGames > 0 ? Math.round(totalScore / totalGames) : 0;
+      document.getElementById('accuracy').textContent = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) + '%' : '0%';
+      
+      const historyList = document.getElementById('history-list');
+      if (gameHistory.length === 0) {
+        historyList.innerHTML = '<p class="text-slate-400 text-center py-8">No hay partidas registradas aún</p>';
+      } else {
+        const sortedHistory = [...gameHistory].sort((a, b) => new Date(b.played_at) - new Date(a.played_at));
+        historyList.innerHTML = sortedHistory.slice(0, 20).map(game => {
+          const date = new Date(game.played_at);
+          const gameTypeNames = { quiz: 'Quiz Clásico', truefalse: 'V/F', wheel: 'Ruleta', speed: 'Contrarreloj' };
+          return `
+            <div class="flex items-center justify-between bg-slate-700/50 rounded-xl p-4">
+              <div>
+                <p class="font-semibold">${gameTypeNames[game.game_type] || game.game_type}</p>
+                <p class="text-sm text-slate-400">${date.toLocaleDateString('es-ES')} ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xl font-bold text-emerald-400">${game.score} pts</p>
+                <p class="text-sm text-slate-400">${game.correct_answers}/${game.total_questions} aciertos</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+    
+    function showScreen(screenId) {
+      ['main-menu', 'game-screen', 'results-screen', 'admin-screen', 'stats-screen'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+    
+    function backToMenu() {
+      if (currentGame.timer) clearInterval(currentGame.timer);
+      showScreen('main-menu');
+    }
+    
+    function showAdmin() {
+      showScreen('admin-screen');
+    }
+    
+    function showStats() {
+      showScreen('stats-screen');
+    }
+    
+    function startGame(type) {
+      currentGame = {
+        type,
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        correctAnswers: 0,
+        timer: null,
+        timeLeft: 10
+      };
+      
+      const titles = {
+        quiz: 'Quiz Clásico',
+        truefalse: 'Verdadero o Falso',
+        wheel: 'Ruleta de Preguntas',
+        speed: 'Contrarreloj'
+      };
+      
+      document.getElementById('game-type-title').textContent = titles[type];
+      
+      // Preparar preguntas según el tipo
+      if (type === 'quiz' || type === 'speed') {
+        currentGame.questions = shuffleArray([...questionsData.quiz]).slice(0, 10);
+      } else if (type === 'truefalse') {
+        currentGame.questions = shuffleArray([...questionsData.truefalse]).slice(0, 10);
+      } else if (type === 'wheel') {
+        currentGame.questions = shuffleArray([...questionsData.quiz, ...questionsData.truefalse]).slice(0, 10);
+      }
+      
+      showScreen('game-screen');
+      
+      // Mostrar/ocultar elementos según el tipo de juego
+      document.getElementById('timer-container').classList.toggle('hidden', type !== 'speed');
+      document.getElementById('wheel-container').classList.toggle('hidden', type !== 'wheel');
+      document.getElementById('question-container').classList.toggle('hidden', type === 'wheel');
+      
+      if (type === 'wheel') {
+        drawWheel();
+      } else {
+        showQuestion();
+      }
+    }
+    
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+    
+    function showQuestion() {
+      const question = currentGame.questions[currentGame.currentIndex];
+      if (!question) return;
+      
+      document.getElementById('question-text').textContent = question.question;
+      document.getElementById('question-counter').textContent = `Pregunta ${currentGame.currentIndex + 1} de ${currentGame.questions.length}`;
+      document.getElementById('current-score').textContent = currentGame.score;
+      document.getElementById('progress-bar').style.width = `${((currentGame.currentIndex) / currentGame.questions.length) * 100}%`;
+      
+      const quizOptions = document.getElementById('quiz-options');
+      const tfOptions = document.getElementById('tf-options');
+      
+      if (question.options) {
+        // Quiz con opciones múltiples
+        quizOptions.classList.remove('hidden');
+        tfOptions.classList.add('hidden');
+        
+        quizOptions.innerHTML = question.options.map((opt, i) => `
+          <button onclick="answerQuiz(${i})" class="option-btn py-4 px-6 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600 hover:border-emerald-500 rounded-xl text-left transition-all transform">
+            <span class="inline-block w-8 h-8 bg-slate-600 rounded-lg text-center leading-8 mr-3 font-bold">${String.fromCharCode(65 + i)}</span>
+            ${opt}
+          </button>
+        `).join('');
+      } else {
+        // Verdadero o Falso
+        quizOptions.classList.add('hidden');
+        tfOptions.classList.remove('hidden');
+      }
+      
+      // Iniciar timer si es contrarreloj
+      if (currentGame.type === 'speed') {
+        startTimer();
+      }
+    }
+    
+    function startTimer() {
+      currentGame.timeLeft = 10;
+      updateTimerDisplay();
+      
+      if (currentGame.timer) clearInterval(currentGame.timer);
+      
+      currentGame.timer = setInterval(() => {
+        currentGame.timeLeft--;
+        updateTimerDisplay();
+        
+        if (currentGame.timeLeft <= 0) {
+          clearInterval(currentGame.timer);
+          showFeedback(false, "¡Se acabó el tiempo!");
+        }
+      }, 1000);
+    }
+    
+    function updateTimerDisplay() {
+      const circle = document.getElementById('timer-circle');
+      const text = document.getElementById('timer-text');
+      const circumference = 226.2;
+      const offset = circumference - (currentGame.timeLeft / 10) * circumference;
+      
+      circle.style.strokeDashoffset = offset;
+      circle.style.stroke = currentGame.timeLeft <= 3 ? '#ef4444' : '#10b981';
+      text.textContent = currentGame.timeLeft;
+    }
+    
+    function answerQuiz(index) {
+      if (currentGame.timer) clearInterval(currentGame.timer);
+      
+      const question = currentGame.questions[currentGame.currentIndex];
+      const isCorrect = index === question.correct;
+      
+      if (isCorrect) {
+        currentGame.score += currentGame.type === 'speed' ? currentGame.timeLeft * 10 + 50 : 100;
+        currentGame.correctAnswers++;
+      }
+      
+      showFeedback(isCorrect, isCorrect ? question.options[question.correct] : `Respuesta correcta: ${question.options[question.correct]}`);
+    }
+    
+    function answerTF(answer) {
+      if (currentGame.timer) clearInterval(currentGame.timer);
+      
+      const question = currentGame.questions[currentGame.currentIndex];
+      const isCorrect = answer === question.correct;
+      
+      if (isCorrect) {
+        currentGame.score += currentGame.type === 'speed' ? currentGame.timeLeft * 10 + 50 : 100;
+        currentGame.correctAnswers++;
+      }
+      
+      showFeedback(isCorrect, isCorrect ? '¡Acertaste!' : `La respuesta era: ${question.correct ? 'Verdadero' : 'Falso'}`);
+    }
+    
+    function showFeedback(isCorrect, message) {
+      const container = document.getElementById('feedback-container');
+      const icon = document.getElementById('feedback-icon');
+      const title = document.getElementById('feedback-title');
+      const text = document.getElementById('feedback-text');
+      
+      container.classList.remove('hidden');
+      
+      if (isCorrect) {
+        icon.className = 'w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center text-4xl bg-emerald-500/20';
+        icon.textContent = '✓';
+        title.textContent = '¡Correcto!';
+        title.className = 'text-2xl font-bold mb-2 text-emerald-400';
+      } else {
+        icon.className = 'w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center text-4xl bg-rose-500/20';
+        icon.textContent = '✗';
+        title.textContent = 'Incorrecto';
+        title.className = 'text-2xl font-bold mb-2 text-rose-400';
+      }
+      
+      text.textContent = message;
+      document.getElementById('current-score').textContent = currentGame.score;
+    }
+    
+    function nextQuestion() {
+      document.getElementById('feedback-container').classList.add('hidden');
+      currentGame.currentIndex++;
+      
+      if (currentGame.currentIndex >= currentGame.questions.length) {
+        endGame();
+      } else if (currentGame.type === 'wheel') {
+        document.getElementById('wheel-container').classList.remove('hidden');
+        document.getElementById('question-container').classList.add('hidden');
+        document.getElementById('spin-btn').disabled = false;
+      } else {
+        showQuestion();
+      }
+    }
+    
+    async function endGame() {
+      document.getElementById('progress-bar').style.width = '100%';
+      
+      // Guardar resultado
+      if (gameHistory.length < 999) {
+        await window.dataSdk.create({
+          game_type: currentGame.type,
+          score: currentGame.score,
+          total_questions: currentGame.questions.length,
+          correct_answers: currentGame.correctAnswers,
+          played_at: new Date().toISOString()
+        });
+      }
+      
+      // Mostrar resultados
+      const percentage = (currentGame.correctAnswers / currentGame.questions.length) * 100;
+      const resultsIcon = document.getElementById('results-icon');
+      
+      if (percentage >= 80) {
+        resultsIcon.className = 'w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center text-5xl bg-emerald-500/20 float-anim';
+        resultsIcon.textContent = '🏆';
+      } else if (percentage >= 50) {
+        resultsIcon.className = 'w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center text-5xl bg-amber-500/20 float-anim';
+        resultsIcon.textContent = '⭐';
+      } else {
+        resultsIcon.className = 'w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center text-5xl bg-slate-500/20 float-anim';
+        resultsIcon.textContent = '💪';
+      }
+      
+      const gameTypeNames = {
+        quiz: 'Quiz Clásico',
+        truefalse: 'Verdadero o Falso',
+        wheel: 'Ruleta de Preguntas',
+        speed: 'Contrarreloj'
+      };
+      
+      document.getElementById('results-game-type').textContent = gameTypeNames[currentGame.type];
+      document.getElementById('final-score').textContent = currentGame.score;
+      document.getElementById('correct-count').textContent = `${currentGame.correctAnswers}/${currentGame.questions.length}`;
+      
+      showScreen('results-screen');
+    }
+    
+    function restartGame() {
+      startGame(currentGame.type);
+    }
+    
+    // Funciones de la ruleta
+    function drawWheel() {
+      const wheel = document.getElementById('wheel');
+      const categories = ['Quiz', 'V/F', 'Quiz', 'V/F', 'Quiz', 'V/F', 'Quiz', 'V/F'];
+      const colors = ['#059669', '#0891b2', '#059669', '#0891b2', '#059669', '#0891b2', '#059669', '#0891b2'];
+      
+      let svg = '';
+      const segments = categories.length;
+      const anglePerSegment = 360 / segments;
+      
+      categories.forEach((cat, i) => {
+        const startAngle = i * anglePerSegment;
+        const endAngle = (i + 1) * anglePerSegment;
+        
+        const startRad = (startAngle - 90) * Math.PI / 180;
+        const endRad = (endAngle - 90) * Math.PI / 180;
+        
+        const x1 = 200 + 180 * Math.cos(startRad);
+        const y1 = 200 + 180 * Math.sin(startRad);
+        const x2 = 200 + 180 * Math.cos(endRad);
+        const y2 = 200 + 180 * Math.sin(endRad);
+        
+        const largeArc = anglePerSegment > 180 ? 1 : 0;
+        
+        svg += `<path d="M200,200 L${x1},${y1} A180,180 0 ${largeArc},1 ${x2},${y2} Z" fill="${colors[i]}"/>`;
+        
+        const textAngle = startAngle + anglePerSegment / 2;
+        const textRad = (textAngle - 90) * Math.PI / 180;
+        const textX = 200 + 120 * Math.cos(textRad);
+        const textY = 200 + 120 * Math.sin(textRad);
+        
+        svg += `<text x="${textX}" y="${textY}" fill="white" font-size="18" font-weight="bold" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle}, ${textX}, ${textY})">${cat}</text>`;
+      });
+      
+      svg += '<circle cx="200" cy="200" r="30" fill="#1e293b" stroke="#334155" stroke-width="4"/>';
+      svg += '<circle cx="200" cy="200" r="15" fill="#059669"/>';
+      
+      wheel.innerHTML = svg;
+    }
+    
+    function spinWheel() {
+      const wheel = document.getElementById('wheel');
+      const spinBtn = document.getElementById('spin-btn');
+      
+      spinBtn.disabled = true;
+      
+      const spins = 5 + Math.random() * 3;
+      const finalRotation = spins * 360 + Math.random() * 360;
+      
+      wheel.style.setProperty('--final-rotation', `${finalRotation}deg`);
+      wheel.classList.remove('wheel-spin');
+      void wheel.offsetWidth;
+      wheel.classList.add('wheel-spin');
+      
+      setTimeout(() => {
+        const normalizedAngle = finalRotation % 360;
+        const segmentIndex = Math.floor(normalizedAngle / 45);
+        const isQuiz = segmentIndex % 2 === 0;
+        
+        // Seleccionar pregunta del tipo correspondiente
+        const availableQuestions = isQuiz ? 
+          questionsData.quiz.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question)) :
+          questionsData.truefalse.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        
+        if (availableQuestions.length > 0) {
+          currentGame.questions[currentGame.currentIndex] = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+        }
+        
+        document.getElementById('wheel-container').classList.add('hidden');
+        document.getElementById('question-container').classList.remove('hidden');
+        showQuestion();
+      }, 4000);
+    }
+    
+    // Funciones de Admin
+    async function loadFromURL() {
+      const urlInput = document.getElementById('json-url');
+      const status = document.getElementById('load-status');
+      const url = urlInput.value.trim();
+      
+      if (!url) {
+        status.textContent = '⚠️ Por favor, introduce una URL válida';
+        status.className = 'mt-3 text-sm text-amber-400';
+        return;
+      }
+      
+      status.textContent = '⏳ Cargando...';
+      status.className = 'mt-3 text-sm text-slate-400';
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error al cargar el archivo');
+        
+        const data = await response.json();
+        
+        if (data.quiz && Array.isArray(data.quiz)) {
+          questionsData.quiz = data.quiz;
+        }
+        if (data.truefalse && Array.isArray(data.truefalse)) {
+          questionsData.truefalse = data.truefalse;
+        }
+        
+        status.textContent = `✅ ¡Cargado! ${questionsData.quiz.length} preguntas quiz, ${questionsData.truefalse.length} preguntas V/F`;
+        status.className = 'mt-3 text-sm text-emerald-400';
+      } catch (error) {
+        status.textContent = `❌ Error: ${error.message}`;
+        status.className = 'mt-3 text-sm text-rose-400';
+      }
+    }
+    
+    function downloadTemplate() {
+      const template = {
+        quiz: [
+          {
+            question: "¿Pregunta de ejemplo sobre Vitrasa?",
+            options: ["Opción A", "Opción B", "Opción C", "Opción D"],
+            correct: 0
+          },
+          {
+            question: "¿Otra pregunta de opción múltiple?",
+            options: ["Primera opción", "Segunda opción", "Tercera opción", "Cuarta opción"],
+            correct: 2
+          }
+        ],
+        truefalse: [
+          {
+            question: "¿Afirmación de ejemplo sobre Vitrasa?",
+            correct: true
+          },
+          {
+            question: "¿Otra afirmación para verificar?",
+            correct: false
+          }
+        ]
+      };
+      
+      const blob = new Blob([JSON.stringify(template, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vitrasa-quiz-plantilla.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    
+    // Inicializar
+    applyConfig();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c423fb5271d0366',t:'MTc2OTQ1Mzk4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
