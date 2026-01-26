@@ -83,7 +83,19 @@
       <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
        <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
        </svg>
-      </div><h3 class="text-xl font-bold mb-2">Verdadero o Falso</h3><p class="text-cyan-200 text-sm">¿Verdad o mentira? Tú decides</p></button> <!-- Ruleta --> <button onclick="startGame('wheel')" class="game-card bg-gradient-to-br from-amber-600 to-orange-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/30 text-left group">
+      </div><h3 class="text-xl font-bold mb-2">Verdadero o Falso</h3><p class="text-cyan-200 text-sm">¿Verdad o mentira? Tú decides</p></button> <!-- Completa la Frase --> <button onclick="startGame('complete')" class="game-card bg-gradient-to-br from-purple-600 to-purple-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Completa la Frase</h3><p class="text-purple-200 text-sm">Escribe la palabra que falta</p></button> <!-- Ordena Elementos --> <button onclick="startGame('order')" class="game-card bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M3 15h18v-2H3v2zm0 4h18v-2H3v2zm0-8h18V9H3v2zm0-6v2h18V5H3z" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Ordena Elementos</h3><p class="text-indigo-200 text-sm">Arrastra y ordena correctamente</p></button> <!-- Relaciona Parejas --> <button onclick="startGame('match')" class="game-card bg-gradient-to-br from-pink-600 to-pink-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Relaciona Parejas</h3><p class="text-pink-200 text-sm">Une cada concepto con su pareja</p></button> <!-- Ruleta --> <button onclick="startGame('wheel')" class="game-card bg-gradient-to-br from-amber-600 to-orange-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/30 text-left group">
       <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
        <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /> <circle cx="12" cy="12" r="3" />
        </svg>
@@ -141,6 +153,20 @@
      <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
      </div><!-- Opciones V/F -->
      <div id="tf-options" class="hidden flex justify-center gap-6"><button onclick="answerTF(true)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-2xl text-2xl font-bold transition-all transform"> ✓ Verdadero </button> <button onclick="answerTF(false)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 rounded-2xl text-2xl font-bold transition-all transform"> ✗ Falso </button>
+     </div><!-- Completa la Frase -->
+     <div id="complete-options" class="hidden flex flex-col items-center gap-4"><input type="text" id="complete-input" placeholder="Escribe tu respuesta aquí..." class="w-full max-w-md px-6 py-4 bg-slate-700 border-2 border-slate-600 rounded-xl text-xl text-center focus:outline-none focus:border-purple-500 transition-colors"> <button onclick="answerComplete()" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 rounded-xl text-xl font-bold transition-all"> Comprobar Respuesta </button>
+     </div><!-- Ordena Elementos -->
+     <div id="order-options" class="hidden">
+      <div id="order-items" class="space-y-3 mb-6">
+      </div><button onclick="checkOrder()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 rounded-xl text-xl font-bold transition-all"> Verificar Orden </button>
+     </div><!-- Relaciona Parejas -->
+     <div id="match-options" class="hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div id="match-left" class="space-y-3">
+       </div>
+       <div id="match-right" class="space-y-3">
+       </div>
+      </div><button onclick="checkMatches()" class="w-full mt-6 py-4 bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 rounded-xl text-xl font-bold transition-all"> Verificar Relaciones </button>
      </div>
     </div><!-- Feedback -->
     <div id="feedback-container" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6">
@@ -267,7 +293,7 @@
     let gameHistory = [];
     
     // URL del JSON con las preguntas - CAMBIA ESTA URL POR LA TUYA
-    const QUESTIONS_JSON_URL = 'https://lucasmaneirodelatm-dot.github.io/vitrasa-quiz/preguntas-vitrasa.json';
+    const QUESTIONS_JSON_URL = 'https://tu-servidor.com/preguntas-vitrasa.json';
     
     // Preguntas por defecto (se usan si falla la carga desde la URL)
     let questionsData = {
@@ -275,37 +301,37 @@
         {
           question: "¿En qué año se fundó Vitrasa?",
           options: ["1968", "1982", "1989", "1930"],
-          correct: 1
+          correct: 0
         },
         {
           question: "¿Cuántas líneas de autobús tiene aproximadamente Vitrasa?",
           options: ["100-150", "15-20", "40-45", "Más de 45"],
-          correct: 3
+          correct: 2
         },
         {
           question: "¿Qué significan las siglas VITRASA?",
           options: ["Vigo Transportes S.A.", "Vigo Tráfico S.A.", "Viajes Transporte S.A.", "Viguesa de Transportes S.A."],
-          correct: 4
+          correct: 3
         },
         {
           question: "¿Cuál es el color corporativo principal de los autobuses Vitrasa?",
           options: ["Verde-Amarillo-Blanco", "Azul celeste", "Verde-Amarillo", "Blanco"],
-          correct: 1
+          correct: 0
         },
         {
           question: "¿Qué tarjeta se utiliza para pagar en Vitrasa?",
           options: ["Tarjeta Bus", "Tarjeta Pass", "Tarjeta Móvil", "Ninguna"],
-          correct: 4
+          correct: 3
         },
-       {
+        {
           question: "¿Qué 4ºs existen?",
           options: ["4A", "4C", "4A-4B-4C", "4A y 4C"],
-          correct: 4
+          correct: 3
         },
-       {
+        {
           question: "¿Cuánta flota de autobuses tienen?",
           options: ["Solo 100", "Solo 200", "130", "150-175"],
-          correct: 3
+          correct: 2
         }
       ],
       truefalse: [
@@ -329,13 +355,77 @@
           question: "Vitrasa dispone de autobuses adaptados para personas con movilidad reducida",
           correct: true
         },
-       {
+        {
           question: "Vitrasa dispone de 46 híbridos",
           correct: true
         },
         {
           question: "Vitrasa solo dispone de buses estándar o 2 microbuses",
-          correct: true
+          correct: false
+        }
+      ],
+      complete: [
+        {
+          question: "Al cortar el túnel del sireno; el C3 se desvia por ________",
+          correct: "Berbés"
+        },
+        {
+          question: "Que línea prolonga al VAO en verano. __",
+          correct: "4C"
+        },
+        {
+          question: "Vitrasa opera con el C3 en _______.",
+          correct: "Redondela"
+        },
+       {
+          question: "El C1 empieza en______ __ _______.",
+          correct: "plaza de américa"
+        }
+      ],
+      order: [
+        {
+          question: "Ordena cronológicamente estos hitos de Vitrasa:",
+          items: ["Fundación de Vitrasa", "Incorporación de buses híbridos", "Ampliación al H. Álvaro Cunqueiro", "Expansión a zonas metropolitanas"],
+          correct: [0, 2, 3, 1]
+        },
+        {
+          question: "Ordena las líneas de menor a mayor recorrido:",
+          items: ["Línea C1", "Línea C3", "Línea U2", "Línea 17"],
+          correct: [0, 2, 3, 1]
+        },
+       {
+          question: "Ordena cronológicamente estas paradas de la L27:",
+          items: ["Beade", "Plaza España", "Rabadeira", "Pza. Rei(ida)", "H. A. C."],
+          correct: [0, 3, 2, 1, 4]
+        },
+        {
+          question: "Ordena la flota de menor a mayor edad:",
+          items: ["MAN", "Castrosua", "Solaris", "Volvo"],
+          correct: [0, 3, 1, 2]
+        }
+      ],
+      match: [
+        {
+          question: "Relaciona cada línea con su destino principal:",
+          pairs: [
+            { left: "Línea C3", right: "Encarnación" },
+            { left: "Línea 12B", right: "H. Meixoeiro" },
+            { left: "Línea 15B", right: "Xestoxo" },
+            { left: "Línea 18A", right: "Praza Miraflores" },
+            { left: "Línea 28", right: "Berbés" },
+            { left: "Línea U1", right: "Universidade" }
+          ]
+        },
+        {
+          question: "Relaciona cada concepto con su definición:",
+          pairs: [
+            { left: "Bus híbrido", right: "Combustión + eléctrico" },
+            { left: "Bus articulado", right: "Dos secciones unidas" },
+            { left: "Microbús", right: "Capacidad reducida" },
+            { left: "Parada", right: "Lugar que la gente espera el bus" },
+            { left: "Horario", right: "Programa de salidas y llegadas" },
+            { left: "Refuerzo", right: "Bus extra para abastecer zonas con mucha demanda" }
+          ]
         }
       ]
     };
@@ -451,7 +541,7 @@
         const sortedHistory = [...gameHistory].sort((a, b) => new Date(b.played_at) - new Date(a.played_at));
         historyList.innerHTML = sortedHistory.slice(0, 20).map(game => {
           const date = new Date(game.played_at);
-          const gameTypeNames = { quiz: 'Quiz Clásico', truefalse: 'V/F', wheel: 'Ruleta', speed: 'Contrarreloj' };
+          const gameTypeNames = { quiz: 'Quiz Clásico', truefalse: 'V/F', complete: 'Completa', order: 'Ordena', match: 'Relaciona', wheel: 'Ruleta', speed: 'Contrarreloj' };
           return `
             <div class="flex items-center justify-between bg-slate-700/50 rounded-xl p-4">
               <div>
@@ -502,6 +592,9 @@
       const titles = {
         quiz: 'Quiz Clásico',
         truefalse: 'Verdadero o Falso',
+        complete: 'Completa la Frase',
+        order: 'Ordena Elementos',
+        match: 'Relaciona Parejas',
         wheel: 'Ruleta de Preguntas',
         speed: 'Contrarreloj'
       };
@@ -509,12 +602,20 @@
       document.getElementById('game-type-title').textContent = titles[type];
       
       // Preparar preguntas según el tipo
-      if (type === 'quiz' || type === 'speed') {
+      if (type === 'quiz') {
         currentGame.questions = shuffleArray([...questionsData.quiz]).slice(0, 10);
       } else if (type === 'truefalse') {
         currentGame.questions = shuffleArray([...questionsData.truefalse]).slice(0, 10);
+      } else if (type === 'complete') {
+        currentGame.questions = shuffleArray([...questionsData.complete]).slice(0, 10);
+      } else if (type === 'order') {
+        currentGame.questions = shuffleArray([...questionsData.order]).slice(0, 10);
+      } else if (type === 'match') {
+        currentGame.questions = shuffleArray([...questionsData.match]).slice(0, 10);
       } else if (type === 'wheel') {
-        currentGame.questions = shuffleArray([...questionsData.quiz, ...questionsData.truefalse]).slice(0, 10);
+        currentGame.questions = shuffleArray([...questionsData.quiz, ...questionsData.truefalse, ...questionsData.complete, ...questionsData.order, ...questionsData.match]).slice(0, 10);
+      } else if (type === 'speed') {
+        currentGame.questions = shuffleArray([...questionsData.quiz, ...questionsData.truefalse, ...questionsData.complete]).slice(0, 10);
       }
       
       showScreen('game-screen');
@@ -551,22 +652,64 @@
       
       const quizOptions = document.getElementById('quiz-options');
       const tfOptions = document.getElementById('tf-options');
+      const completeOptions = document.getElementById('complete-options');
+      const orderOptions = document.getElementById('order-options');
+      const matchOptions = document.getElementById('match-options');
+      
+      // Ocultar todas las opciones
+      quizOptions.classList.add('hidden');
+      tfOptions.classList.add('hidden');
+      completeOptions.classList.add('hidden');
+      orderOptions.classList.add('hidden');
+      matchOptions.classList.add('hidden');
       
       if (question.options) {
         // Quiz con opciones múltiples
         quizOptions.classList.remove('hidden');
-        tfOptions.classList.add('hidden');
-        
         quizOptions.innerHTML = question.options.map((opt, i) => `
           <button onclick="answerQuiz(${i})" class="option-btn py-4 px-6 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600 hover:border-emerald-500 rounded-xl text-left transition-all transform">
             <span class="inline-block w-8 h-8 bg-slate-600 rounded-lg text-center leading-8 mr-3 font-bold">${String.fromCharCode(65 + i)}</span>
             ${opt}
           </button>
         `).join('');
-      } else {
+      } else if (question.correct !== undefined && typeof question.correct === 'boolean') {
         // Verdadero o Falso
-        quizOptions.classList.add('hidden');
         tfOptions.classList.remove('hidden');
+      } else if (question.correct !== undefined && typeof question.correct === 'string') {
+        // Completa la Frase
+        completeOptions.classList.remove('hidden');
+        document.getElementById('complete-input').value = '';
+      } else if (question.items) {
+        // Ordena Elementos
+        orderOptions.classList.remove('hidden');
+        const shuffled = shuffleArray([...question.items]);
+        document.getElementById('order-items').innerHTML = shuffled.map((item, i) => `
+          <div class="order-item flex items-center gap-3 p-4 bg-slate-700/50 border border-slate-600 rounded-xl cursor-move" draggable="true" data-item="${item}">
+            <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <span class="flex-1">${item}</span>
+          </div>
+        `).join('');
+        setupDragAndDrop();
+      } else if (question.pairs) {
+        // Relaciona Parejas
+        matchOptions.classList.remove('hidden');
+        const shuffledRight = shuffleArray([...question.pairs.map(p => p.right)]);
+        
+        document.getElementById('match-left').innerHTML = question.pairs.map((pair, i) => `
+          <button class="match-left-item p-4 bg-slate-700/50 border-2 border-slate-600 rounded-xl text-left hover:bg-slate-600/50 transition-all" data-index="${i}">
+            ${pair.left}
+          </button>
+        `).join('');
+        
+        document.getElementById('match-right').innerHTML = shuffledRight.map((right, i) => `
+          <button class="match-right-item p-4 bg-slate-700/50 border-2 border-slate-600 rounded-xl text-left hover:bg-slate-600/50 transition-all" data-value="${right}">
+            ${right}
+          </button>
+        `).join('');
+        
+        setupMatching();
       }
       
       // Iniciar timer si es contrarreloj
@@ -629,6 +772,137 @@
       }
       
       showFeedback(isCorrect, isCorrect ? '¡Acertaste!' : `La respuesta era: ${question.correct ? 'Verdadero' : 'Falso'}`);
+    }
+    
+    function answerComplete() {
+      if (currentGame.timer) clearInterval(currentGame.timer);
+      
+      const question = currentGame.questions[currentGame.currentIndex];
+      const userAnswer = document.getElementById('complete-input').value.trim().toLowerCase();
+      const correctAnswer = question.correct.toLowerCase();
+      const isCorrect = userAnswer === correctAnswer;
+      
+      if (isCorrect) {
+        currentGame.score += currentGame.type === 'speed' ? currentGame.timeLeft * 10 + 50 : 100;
+        currentGame.correctAnswers++;
+      }
+      
+      showFeedback(isCorrect, isCorrect ? `¡Correcto! La respuesta era: ${question.correct}` : `La respuesta correcta era: ${question.correct}`);
+    }
+    
+    function checkOrder() {
+      if (currentGame.timer) clearInterval(currentGame.timer);
+      
+      const question = currentGame.questions[currentGame.currentIndex];
+      const orderItems = document.querySelectorAll('.order-item');
+      const userOrder = Array.from(orderItems).map(item => item.dataset.item);
+      const correctOrder = question.correct.map(i => question.items[i]);
+      
+      const isCorrect = JSON.stringify(userOrder) === JSON.stringify(correctOrder);
+      
+      if (isCorrect) {
+        currentGame.score += 100;
+        currentGame.correctAnswers++;
+      }
+      
+      showFeedback(isCorrect, isCorrect ? '¡Orden correcto!' : `Orden correcto: ${correctOrder.join(' → ')}`);
+    }
+    
+    function checkMatches() {
+      if (currentGame.timer) clearInterval(currentGame.timer);
+      
+      const question = currentGame.questions[currentGame.currentIndex];
+      const leftItems = document.querySelectorAll('.match-left-item');
+      let correctMatches = 0;
+      
+      leftItems.forEach(leftItem => {
+        const leftIndex = parseInt(leftItem.dataset.index);
+        const selectedRight = leftItem.dataset.selected;
+        const correctRight = question.pairs[leftIndex].right;
+        
+        if (selectedRight === correctRight) {
+          correctMatches++;
+        }
+      });
+      
+      const isCorrect = correctMatches === question.pairs.length;
+      
+      if (isCorrect) {
+        currentGame.score += 100;
+        currentGame.correctAnswers++;
+      }
+      
+      showFeedback(isCorrect, isCorrect ? '¡Todas las relaciones correctas!' : `Relaciones correctas: ${correctMatches}/${question.pairs.length}`);
+    }
+    
+    function setupDragAndDrop() {
+      const items = document.querySelectorAll('.order-item');
+      let draggedItem = null;
+      
+      items.forEach(item => {
+        item.addEventListener('dragstart', () => {
+          draggedItem = item;
+          item.style.opacity = '0.5';
+        });
+        
+        item.addEventListener('dragend', () => {
+          item.style.opacity = '1';
+        });
+        
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+        
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          if (draggedItem !== item) {
+            const container = item.parentNode;
+            const allItems = Array.from(container.children);
+            const draggedIndex = allItems.indexOf(draggedItem);
+            const targetIndex = allItems.indexOf(item);
+            
+            if (draggedIndex < targetIndex) {
+              container.insertBefore(draggedItem, item.nextSibling);
+            } else {
+              container.insertBefore(draggedItem, item);
+            }
+          }
+        });
+      });
+    }
+    
+    let matchState = { selectedLeft: null, selectedRight: null };
+    
+    function setupMatching() {
+      matchState = { selectedLeft: null, selectedRight: null };
+      
+      document.querySelectorAll('.match-left-item').forEach(item => {
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.match-left-item').forEach(i => {
+            i.classList.remove('border-purple-500', 'bg-purple-500/20');
+            i.classList.add('border-slate-600');
+          });
+          item.classList.remove('border-slate-600');
+          item.classList.add('border-purple-500', 'bg-purple-500/20');
+          matchState.selectedLeft = item;
+        });
+      });
+      
+      document.querySelectorAll('.match-right-item').forEach(item => {
+        item.addEventListener('click', () => {
+          if (matchState.selectedLeft) {
+            matchState.selectedLeft.dataset.selected = item.dataset.value;
+            matchState.selectedLeft.classList.remove('border-purple-500', 'bg-purple-500/20');
+            matchState.selectedLeft.classList.add('border-emerald-500', 'bg-emerald-500/20');
+            matchState.selectedLeft.innerHTML += ` <span class="text-emerald-400">→ ${item.dataset.value}</span>`;
+            
+            item.style.opacity = '0.5';
+            item.disabled = true;
+            
+            matchState.selectedLeft = null;
+          }
+        });
+      });
     }
     
     function showFeedback(isCorrect, message) {
@@ -702,6 +976,9 @@
       const gameTypeNames = {
         quiz: 'Quiz Clásico',
         truefalse: 'Verdadero o Falso',
+        complete: 'Completa la Frase',
+        order: 'Ordena Elementos',
+        match: 'Relaciona Parejas',
         wheel: 'Ruleta de Preguntas',
         speed: 'Contrarreloj'
       };
@@ -720,8 +997,8 @@
     // Funciones de la ruleta
     function drawWheel() {
       const wheel = document.getElementById('wheel');
-      const categories = ['Quiz', 'V/F', 'Quiz', 'V/F', 'Quiz', 'V/F', 'Quiz', 'V/F'];
-      const colors = ['#059669', '#0891b2', '#059669', '#0891b2', '#059669', '#0891b2', '#059669', '#0891b2'];
+      const categories = ['Quiz', 'V/F', 'Completa', 'Ordena', 'Relaciona', 'Quiz', 'V/F', 'Completa'];
+      const colors = ['#059669', '#0891b2', '#9333ea', '#6366f1', '#ec4899', '#059669', '#0891b2', '#9333ea'];
       
       let svg = '';
       const segments = categories.length;
@@ -774,12 +1051,25 @@
       setTimeout(() => {
         const normalizedAngle = finalRotation % 360;
         const segmentIndex = Math.floor(normalizedAngle / 45);
-        const isQuiz = segmentIndex % 2 === 0;
+        
+        // Mapear segmento a tipo de pregunta
+        const segmentTypes = ['quiz', 'truefalse', 'complete', 'order', 'match', 'quiz', 'truefalse', 'complete'];
+        const selectedType = segmentTypes[segmentIndex];
         
         // Seleccionar pregunta del tipo correspondiente
-        const availableQuestions = isQuiz ? 
-          questionsData.quiz.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question)) :
-          questionsData.truefalse.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        let availableQuestions = [];
+        
+        if (selectedType === 'quiz') {
+          availableQuestions = questionsData.quiz.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        } else if (selectedType === 'truefalse') {
+          availableQuestions = questionsData.truefalse.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        } else if (selectedType === 'complete') {
+          availableQuestions = questionsData.complete.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        } else if (selectedType === 'order') {
+          availableQuestions = questionsData.order.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        } else if (selectedType === 'match') {
+          availableQuestions = questionsData.match.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        }
         
         if (availableQuestions.length > 0) {
           currentGame.questions[currentGame.currentIndex] = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
@@ -803,7 +1093,7 @@
         return;
       }
       
-      status.textContent = '⏳ Cargando...';
+      status.textContent = '��� Cargando...';
       status.className = 'mt-3 text-sm text-slate-400';
       
       try {
@@ -867,5 +1157,5 @@
     // Inicializar
     applyConfig();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c423fb5271d0366',t:'MTc2OTQ1Mzk4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c426ae785e9fc51',t:'MTc2OTQ1NTc1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
