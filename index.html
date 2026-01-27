@@ -95,7 +95,11 @@
       <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
        <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" />
        </svg>
-      </div><h3 class="text-xl font-bold mb-2">Relaciona Parejas</h3><p class="text-pink-200 text-sm">Une cada concepto con su pareja</p></button> <!-- Ruleta --> <button onclick="startGame('wheel')" class="game-card bg-gradient-to-br from-amber-600 to-orange-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/30 text-left group">
+      </div><h3 class="text-xl font-bold mb-2">Relaciona Parejas</h3><p class="text-pink-200 text-sm">Une cada concepto con su pareja</p></button> <!-- Puzles con Imágenes --> <button onclick="startGame('puzzle')" class="game-card bg-gradient-to-br from-violet-600 to-violet-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/30 text-left group">
+      <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+       <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z" />
+       </svg>
+      </div><h3 class="text-xl font-bold mb-2">Puzles con Imágenes</h3><p class="text-violet-200 text-sm">Resuelve el puzle de imágenes reales</p></button> <!-- Ruleta --> <button onclick="startGame('wheel')" class="game-card bg-gradient-to-br from-amber-600 to-orange-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/30 text-left group">
       <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
        <svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /> <circle cx="12" cy="12" r="3" />
        </svg>
@@ -167,6 +171,16 @@
        <div id="match-right" class="space-y-3">
        </div>
       </div><button onclick="checkMatches()" class="w-full mt-6 py-4 bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 rounded-xl text-xl font-bold transition-all"> Verificar Relaciones </button>
+     </div><!-- Puzles con Imágenes -->
+     <div id="puzzle-options" class="hidden">
+      <div class="mb-6">
+       <div id="puzzle-container" class="relative mx-auto" style="max-width: 400px; max-height: 400px;">
+        <canvas id="puzzle-canvas" class="w-full h-full border-4 border-slate-600 rounded-xl"></canvas>
+       </div>
+      </div>
+      <div class="text-center">
+       <p id="puzzle-moves" class="text-lg font-semibold mb-2">Movimientos: 0</p><button onclick="resetPuzzle()" class="px-6 py-3 bg-violet-600 hover:bg-violet-500 rounded-xl font-semibold transition-all"> Reiniciar Puzle </button>
+      </div>
      </div>
     </div><!-- Feedback -->
     <div id="feedback-container" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6">
@@ -301,12 +315,12 @@
         {
           question: "¿En qué año se fundó Vitrasa?",
           options: ["1968", "1982", "1989", "1930"],
-          correct: 0
+          correct: 1
         },
         {
           question: "¿Cuántas líneas de autobús tiene aproximadamente Vitrasa?",
           options: ["100-150", "15-20", "40-45", "Más de 45"],
-          correct: 2
+          correct: 3
         },
         {
           question: "¿Qué significan las siglas VITRASA?",
@@ -316,7 +330,7 @@
         {
           question: "¿Cuál es el color corporativo principal de los autobuses Vitrasa?",
           options: ["Verde-Amarillo-Blanco", "Azul celeste", "Verde-Amarillo", "Blanco"],
-          correct: 0
+          correct: 1
         },
         {
           question: "¿Qué tarjeta se utiliza para pagar en Vitrasa?",
@@ -331,7 +345,7 @@
         {
           question: "¿Cuánta flota de autobuses tienen?",
           options: ["Solo 100", "Solo 200", "130", "150-175"],
-          correct: 2
+          correct: 3
         }
       ],
       truefalse: [
@@ -366,42 +380,23 @@
       ],
       complete: [
         {
-          question: "Al cortar el túnel del sireno; el C3 se desvia por ________",
-          correct: "Berbés"
+          question: "La empresa Vitrasa se fundó en el año ____",
+          correct: "1982"
         },
         {
-          question: "Que línea prolonga al VAO en verano. __",
-          correct: "4C"
+          question: "El color corporativo de Vitrasa es ____",
+          correct: "verde"
         },
         {
-          question: "Vitrasa opera con el C3 en _______.",
-          correct: "Redondela"
-        },
-       {
-          question: "El C1 empieza en______ __ _______.",
-          correct: "plaza de américa"
+          question: "Vitrasa opera principalmente en la ciudad de ____",
+          correct: "vigo"
         }
       ],
       order: [
         {
           question: "Ordena cronológicamente estos hitos de Vitrasa:",
           items: ["Fundación de Vitrasa", "Incorporación de buses híbridos", "Ampliación al H. Álvaro Cunqueiro", "Expansión a zonas metropolitanas"],
-          correct: [0, 2, 3, 1]
-        },
-        {
-          question: "Ordena las líneas de menor a mayor recorrido:",
-          items: ["Línea C1", "Línea C3", "Línea U2", "Línea 17"],
-          correct: [0, 2, 3, 1]
-        },
-       {
-          question: "Ordena cronológicamente estas paradas de la L27:",
-          items: ["Beade", "Plaza España", "Rabadeira", "Pza. Rei(ida)", "H. A. C."],
-          correct: [0, 3, 2, 1, 4]
-        },
-        {
-          question: "Ordena la flota de menor a mayor edad:",
-          items: ["MAN", "Castrosua", "Solaris", "Volvo"],
-          correct: [0, 3, 1, 2]
+          correct: [0, 3, 2, 1]
         }
       ],
       match: [
@@ -426,6 +421,28 @@
             { left: "Horario", right: "Programa de salidas y llegadas" },
             { left: "Refuerzo", right: "Bus extra para abastecer zonas con mucha demanda" }
           ]
+        }
+      ],
+      puzzle: [
+        {
+          question: "Completa el puzle de esta imagen de Vitrasa",
+          image: "https://lucasmaneirodelatm-dot.github.io/vitrasa-quiz/img_pluzzle/20241219_131934-scaled.jpeg"
+        },
+        {
+          question: "Completa el puzle del autobús Solaris",
+          image: "https://lucasmaneirodelatm-dot.github.io/vitrasa-quiz/img_pluzzle/SOLARIS.png"
+        },
+        {
+          question: "Completa el puzle del bus de servicios mínimos",
+          image: "https://lucasmaneirodelatm-dot.github.io/vitrasa-quiz/img_pluzzle/BUS%20SERVICIOS%20MI%CC%81NIMOS-P.ESPANA.png"
+        },
+        {
+          question: "Completa el puzle de la línea C1",
+          image: "https://lucasmaneirodelatm-dot.github.io/vitrasa-quiz/img_pluzzle/C1.png"
+        },
+        {
+          question: "Completa el puzle de Vitrasa en Castelao",
+          image: "https://lucasmaneirodelatm-dot.github.io/vitrasa-quiz/img_pluzzle/Vitrasa%20en%20Castelao.png"
         }
       ]
     };
@@ -541,7 +558,7 @@
         const sortedHistory = [...gameHistory].sort((a, b) => new Date(b.played_at) - new Date(a.played_at));
         historyList.innerHTML = sortedHistory.slice(0, 20).map(game => {
           const date = new Date(game.played_at);
-          const gameTypeNames = { quiz: 'Quiz Clásico', truefalse: 'V/F', complete: 'Completa', order: 'Ordena', match: 'Relaciona', wheel: 'Ruleta', speed: 'Contrarreloj' };
+          const gameTypeNames = { quiz: 'Quiz Clásico', truefalse: 'V/F', complete: 'Completa', order: 'Ordena', match: 'Relaciona', puzzle: 'Puzle', wheel: 'Ruleta', speed: 'Contrarreloj' };
           return `
             <div class="flex items-center justify-between bg-slate-700/50 rounded-xl p-4">
               <div>
@@ -595,6 +612,7 @@
         complete: 'Completa la Frase',
         order: 'Ordena Elementos',
         match: 'Relaciona Parejas',
+        puzzle: 'Puzles con Imágenes',
         wheel: 'Ruleta de Preguntas',
         speed: 'Contrarreloj'
       };
@@ -612,8 +630,10 @@
         currentGame.questions = shuffleArray([...questionsData.order]).slice(0, 10);
       } else if (type === 'match') {
         currentGame.questions = shuffleArray([...questionsData.match]).slice(0, 10);
+      } else if (type === 'puzzle') {
+        currentGame.questions = shuffleArray([...questionsData.puzzle]).slice(0, 5);
       } else if (type === 'wheel') {
-        currentGame.questions = shuffleArray([...questionsData.quiz, ...questionsData.truefalse, ...questionsData.complete, ...questionsData.order, ...questionsData.match]).slice(0, 10);
+        currentGame.questions = shuffleArray([...questionsData.quiz, ...questionsData.truefalse, ...questionsData.complete, ...questionsData.order, ...questionsData.match, ...questionsData.puzzle]).slice(0, 10);
       } else if (type === 'speed') {
         currentGame.questions = shuffleArray([...questionsData.quiz, ...questionsData.truefalse, ...questionsData.complete]).slice(0, 10);
       }
@@ -655,6 +675,7 @@
       const completeOptions = document.getElementById('complete-options');
       const orderOptions = document.getElementById('order-options');
       const matchOptions = document.getElementById('match-options');
+      const puzzleOptions = document.getElementById('puzzle-options');
       
       // Ocultar todas las opciones
       quizOptions.classList.add('hidden');
@@ -662,6 +683,7 @@
       completeOptions.classList.add('hidden');
       orderOptions.classList.add('hidden');
       matchOptions.classList.add('hidden');
+      puzzleOptions.classList.add('hidden');
       
       if (question.options) {
         // Quiz con opciones múltiples
@@ -710,11 +732,286 @@
         `).join('');
         
         setupMatching();
+      } else if (question.image) {
+        // Puzles con imágenes
+        puzzleOptions.classList.remove('hidden');
+        initPuzzle(question.image);
       }
       
       // Iniciar timer si es contrarreloj
       if (currentGame.type === 'speed') {
         startTimer();
+      }
+    }
+    
+    // Variables para el puzle
+    let puzzleState = {
+      image: null,
+      tiles: [],
+      emptyIndex: 15,
+      moves: 0,
+      canvas: null,
+      ctx: null,
+      tileSize: 0,
+      gridSize: 4,
+      selectedTile: null
+    };
+    
+    function initPuzzle(imageUrl) {
+      puzzleState.moves = 0;
+      puzzleState.selectedTile = null;
+      document.getElementById('puzzle-moves').textContent = 'Movimientos: 0';
+      
+      const canvas = document.getElementById('puzzle-canvas');
+      const ctx = canvas.getContext('2d');
+      puzzleState.canvas = canvas;
+      puzzleState.ctx = ctx;
+      
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        puzzleState.image = img;
+        
+        // Ajustar tamaño del canvas
+        const containerSize = Math.min(400, window.innerWidth - 100);
+        canvas.width = containerSize;
+        canvas.height = containerSize;
+        puzzleState.tileSize = containerSize / puzzleState.gridSize;
+        
+        // Inicializar tiles en orden
+        puzzleState.tiles = [];
+        for (let i = 0; i < 16; i++) {
+          puzzleState.tiles.push(i);
+        }
+        
+        // Mezclar el puzle
+        shufflePuzzle();
+        drawPuzzle();
+      };
+      
+      img.onerror = function() {
+        console.error('Error al cargar imagen:', imageUrl);
+        showFeedback(false, 'Error al cargar la imagen del puzle');
+      };
+      
+      img.src = imageUrl;
+      
+      // Agregar eventos de clic y movimiento al canvas
+      canvas.onclick = handlePuzzleClick;
+      canvas.onmousemove = handlePuzzleHover;
+      canvas.style.cursor = 'pointer';
+    }
+    
+    function shufflePuzzle() {
+      // Realizar 200 movimientos aleatorios válidos para asegurar que el puzle sea resoluble
+      for (let i = 0; i < 200; i++) {
+        const validMoves = getValidMoves(puzzleState.emptyIndex);
+        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        swapTiles(puzzleState.emptyIndex, randomMove, false);
+      }
+    }
+    
+    function getValidMoves(emptyIndex) {
+      const moves = [];
+      const row = Math.floor(emptyIndex / 4);
+      const col = emptyIndex % 4;
+      
+      if (row > 0) moves.push(emptyIndex - 4); // arriba
+      if (row < 3) moves.push(emptyIndex + 4); // abajo
+      if (col > 0) moves.push(emptyIndex - 1); // izquierda
+      if (col < 3) moves.push(emptyIndex + 1); // derecha
+      
+      return moves;
+    }
+    
+    function swapTiles(index1, index2, countMove = true) {
+      [puzzleState.tiles[index1], puzzleState.tiles[index2]] = [puzzleState.tiles[index2], puzzleState.tiles[index1]];
+      puzzleState.emptyIndex = index2;
+      
+      if (countMove) {
+        puzzleState.moves++;
+        document.getElementById('puzzle-moves').textContent = `Movimientos: ${puzzleState.moves}`;
+      }
+    }
+    
+    function handlePuzzleClick(event) {
+      const rect = puzzleState.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      const col = Math.floor(x / puzzleState.tileSize);
+      const row = Math.floor(y / puzzleState.tileSize);
+      const clickedIndex = row * 4 + col;
+      
+      // Verificar si el tile clickeado está adyacente al espacio vacío
+      const validMoves = getValidMoves(puzzleState.emptyIndex);
+      
+      // Primer clic: seleccionar pieza
+      if (puzzleState.selectedTile === null) {
+        if (validMoves.includes(clickedIndex)) {
+          puzzleState.selectedTile = clickedIndex;
+          drawPuzzle();
+          highlightSelectedTile();
+        }
+      } 
+      // Segundo clic: mover a destino (debe ser el espacio vacío)
+      else {
+        if (clickedIndex === puzzleState.emptyIndex) {
+          swapTiles(puzzleState.emptyIndex, puzzleState.selectedTile);
+          puzzleState.selectedTile = null;
+          drawPuzzle();
+          
+          // Verificar si el puzle está resuelto
+          if (isPuzzleSolved()) {
+            puzzleState.canvas.onclick = null;
+            setTimeout(() => {
+              currentGame.score += Math.max(100, 500 - puzzleState.moves * 2);
+              currentGame.correctAnswers++;
+              showFeedback(true, `¡Puzle completado en ${puzzleState.moves} movimientos!`);
+            }, 300);
+          }
+        } else if (validMoves.includes(clickedIndex)) {
+          // Si hace clic en otra pieza válida, cambiar selección
+          puzzleState.selectedTile = clickedIndex;
+          drawPuzzle();
+          highlightSelectedTile();
+        } else {
+          // Si hace clic en una pieza no válida, deseleccionar
+          puzzleState.selectedTile = null;
+          drawPuzzle();
+        }
+      }
+    }
+    
+    function highlightValidMoves() {
+      const ctx = puzzleState.ctx;
+      const tileSize = puzzleState.tileSize;
+      const validMoves = getValidMoves(puzzleState.emptyIndex);
+      
+      // Dibujar highlight en las piezas que se pueden mover
+      validMoves.forEach(index => {
+        const row = Math.floor(index / 4);
+        const col = index % 4;
+        
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(col * tileSize + 2, row * tileSize + 2, tileSize - 4, tileSize - 4);
+      });
+    }
+    
+    function highlightSelectedTile() {
+      if (puzzleState.selectedTile === null) return;
+      
+      const ctx = puzzleState.ctx;
+      const tileSize = puzzleState.tileSize;
+      const row = Math.floor(puzzleState.selectedTile / 4);
+      const col = puzzleState.selectedTile % 4;
+      
+      // Dibujar borde azul grueso en la pieza seleccionada
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(col * tileSize + 3, row * tileSize + 3, tileSize - 6, tileSize - 6);
+      
+      // Dibujar borde verde en el espacio vacío (destino)
+      const emptyRow = Math.floor(puzzleState.emptyIndex / 4);
+      const emptyCol = puzzleState.emptyIndex % 4;
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(emptyCol * tileSize + 3, emptyRow * tileSize + 3, tileSize - 6, tileSize - 6);
+    }
+    
+    function handlePuzzleHover(event) {
+      const rect = puzzleState.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      const col = Math.floor(x / puzzleState.tileSize);
+      const row = Math.floor(y / puzzleState.tileSize);
+      const hoveredIndex = row * 4 + col;
+      
+      const validMoves = getValidMoves(puzzleState.emptyIndex);
+      
+      // Redibujar el puzle
+      drawPuzzle();
+      
+      // Si ya hay una pieza seleccionada, mostrarla
+      if (puzzleState.selectedTile !== null) {
+        highlightSelectedTile();
+      }
+      // Si no hay pieza seleccionada y está sobre una pieza movible, mostrar hover
+      else if (validMoves.includes(hoveredIndex)) {
+        const ctx = puzzleState.ctx;
+        const tileSize = puzzleState.tileSize;
+        
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(col * tileSize + 2, row * tileSize + 2, tileSize - 4, tileSize - 4);
+        
+        puzzleState.canvas.style.cursor = 'pointer';
+        return;
+      }
+      
+      // Cambiar cursor según contexto
+      if (puzzleState.selectedTile !== null && hoveredIndex === puzzleState.emptyIndex) {
+        puzzleState.canvas.style.cursor = 'pointer'; // Destino válido
+      } else if (puzzleState.selectedTile !== null && validMoves.includes(hoveredIndex)) {
+        puzzleState.canvas.style.cursor = 'pointer'; // Otra pieza válida
+      } else if (puzzleState.selectedTile === null && validMoves.includes(hoveredIndex)) {
+        puzzleState.canvas.style.cursor = 'pointer'; // Pieza seleccionable
+      } else {
+        puzzleState.canvas.style.cursor = 'default';
+      }
+    }
+    
+    function drawPuzzle() {
+      const ctx = puzzleState.ctx;
+      const img = puzzleState.image;
+      const tileSize = puzzleState.tileSize;
+      
+      ctx.clearRect(0, 0, puzzleState.canvas.width, puzzleState.canvas.height);
+      
+      for (let i = 0; i < 16; i++) {
+        const tileValue = puzzleState.tiles[i];
+        
+        if (tileValue === 15) continue; // Espacio vacío
+        
+        const row = Math.floor(i / 4);
+        const col = i % 4;
+        const srcRow = Math.floor(tileValue / 4);
+        const srcCol = tileValue % 4;
+        
+        const srcSize = img.width / 4;
+        
+        ctx.drawImage(
+          img,
+          srcCol * srcSize,
+          srcRow * srcSize,
+          srcSize,
+          srcSize,
+          col * tileSize + 2,
+          row * tileSize + 2,
+          tileSize - 4,
+          tileSize - 4
+        );
+        
+        // Dibujar borde alrededor de cada tile
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(col * tileSize, row * tileSize, tileSize, tileSize);
+      }
+    }
+    
+    function isPuzzleSolved() {
+      for (let i = 0; i < 16; i++) {
+        if (puzzleState.tiles[i] !== i) return false;
+      }
+      return true;
+    }
+    
+    function resetPuzzle() {
+      const question = currentGame.questions[currentGame.currentIndex];
+      if (question && question.image) {
+        initPuzzle(question.image);
       }
     }
     
@@ -979,6 +1276,7 @@
         complete: 'Completa la Frase',
         order: 'Ordena Elementos',
         match: 'Relaciona Parejas',
+        puzzle: 'Puzles con Imágenes',
         wheel: 'Ruleta de Preguntas',
         speed: 'Contrarreloj'
       };
@@ -997,8 +1295,8 @@
     // Funciones de la ruleta
     function drawWheel() {
       const wheel = document.getElementById('wheel');
-      const categories = ['Quiz', 'V/F', 'Completa', 'Ordena', 'Relaciona', 'Quiz', 'V/F', 'Completa'];
-      const colors = ['#059669', '#0891b2', '#9333ea', '#6366f1', '#ec4899', '#059669', '#0891b2', '#9333ea'];
+      const categories = ['Quiz', 'V/F', 'Completa', 'Ordena', 'Relaciona', 'Puzle', 'Quiz', 'V/F'];
+      const colors = ['#059669', '#0891b2', '#9333ea', '#6366f1', '#ec4899', '#7c3aed', '#059669', '#0891b2'];
       
       let svg = '';
       const segments = categories.length;
@@ -1053,7 +1351,7 @@
         const segmentIndex = Math.floor(normalizedAngle / 45);
         
         // Mapear segmento a tipo de pregunta
-        const segmentTypes = ['quiz', 'truefalse', 'complete', 'order', 'match', 'quiz', 'truefalse', 'complete'];
+        const segmentTypes = ['quiz', 'truefalse', 'complete', 'order', 'match', 'puzzle', 'quiz', 'truefalse'];
         const selectedType = segmentTypes[segmentIndex];
         
         // Seleccionar pregunta del tipo correspondiente
@@ -1069,6 +1367,8 @@
           availableQuestions = questionsData.order.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
         } else if (selectedType === 'match') {
           availableQuestions = questionsData.match.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.question === q.question));
+        } else if (selectedType === 'puzzle') {
+          availableQuestions = questionsData.puzzle.filter(q => !currentGame.questions.slice(0, currentGame.currentIndex).some(used => used.image === q.image));
         }
         
         if (availableQuestions.length > 0) {
@@ -1157,5 +1457,5 @@
     // Inicializar
     applyConfig();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c426ae785e9fc51',t:'MTc2OTQ1NTc1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c4a4a5df65404ad',t:'MTc2OTUzODMwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
