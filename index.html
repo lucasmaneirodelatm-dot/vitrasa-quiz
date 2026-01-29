@@ -646,6 +646,10 @@
       document.getElementById('question-container').classList.toggle('hidden', type === 'wheel');
       
       if (type === 'wheel') {
+        wheelRotation = 0; // Reiniciar rotación al empezar
+        const wheel = document.getElementById('wheel');
+        wheel.style.transform = 'rotate(0deg)'; // Reiniciar posición visual
+        wheel.classList.remove('wheel-spin');
         drawWheel();
       } else {
         showQuestion();
@@ -754,18 +758,26 @@
       ctx: null,
       tileSize: 0,
       gridSize: 4,
-      selectedTile: null
+      draggedIndex: null,
+      hoveredIndex: null
     };
     
     function initPuzzle(imageUrl) {
       puzzleState.moves = 0;
-      puzzleState.selectedTile = null;
+      puzzleState.draggedIndex = null;
+      puzzleState.hoveredIndex = null;
       document.getElementById('puzzle-moves').textContent = 'Movimientos: 0';
       
       const canvas = document.getElementById('puzzle-canvas');
       const ctx = canvas.getContext('2d');
       puzzleState.canvas = canvas;
       puzzleState.ctx = ctx;
+      
+      // Limpiar eventos anteriores
+      canvas.onmousedown = null;
+      canvas.onmousemove = null;
+      canvas.onmouseup = null;
+      canvas.ondragstart = null;
       
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -787,19 +799,31 @@
         // Mezclar el puzle
         shufflePuzzle();
         drawPuzzle();
+        
+        // Agregar eventos de arrastre al canvas
+        canvas.onmousedown = handlePuzzleMouseDown;
+        canvas.onmousemove = handlePuzzleMouseMove;
+        canvas.onmouseup = handlePuzzleMouseUp;
+        canvas.style.cursor = 'grab';
       };
       
       img.onerror = function() {
         console.error('Error al cargar imagen:', imageUrl);
-        showFeedback(false, 'Error al cargar la imagen del puzle');
+        const canvas = document.getElementById('puzzle-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#f1f5f9';
+        ctx.font = '20px Outfit';
+        ctx.textAlign = 'center';
+        ctx.fillText('Error al cargar imagen', canvas.width / 2, canvas.height / 2);
+        
+        setTimeout(() => {
+          showFeedback(false, 'Error al cargar la imagen del puzle. Continuando...');
+        }, 1000);
       };
       
       img.src = imageUrl;
-      
-      // Agregar eventos de clic y movimiento al canvas
-      canvas.onclick = handlePuzzleClick;
-      canvas.onmousemove = handlePuzzleHover;
-      canvas.style.cursor = 'pointer';
     }
     
     function shufflePuzzle() {
@@ -826,7 +850,13 @@
     
     function swapTiles(index1, index2, countMove = true) {
       [puzzleState.tiles[index1], puzzleState.tiles[index2]] = [puzzleState.tiles[index2], puzzleState.tiles[index1]];
-      puzzleState.emptyIndex = index2;
+      
+      // Si uno de los tiles es el espacio vacío, actualizar emptyIndex
+      if (puzzleState.tiles[index1] === 15) {
+        puzzleState.emptyIndex = index1;
+      } else if (puzzleState.tiles[index2] === 15) {
+        puzzleState.emptyIndex = index2;
+      }
       
       if (countMove) {
         puzzleState.moves++;
@@ -834,133 +864,93 @@
       }
     }
     
-    function handlePuzzleClick(event) {
+    function getIndexFromCoords(x, y) {
+      const col = Math.floor(x / puzzleState.tileSize);
+      const row = Math.floor(y / puzzleState.tileSize);
+      if (row < 0 || row >= 4 || col < 0 || col >= 4) return null;
+      return row * 4 + col;
+    }
+    
+    function handlePuzzleMouseDown(event) {
       const rect = puzzleState.canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       
-      const col = Math.floor(x / puzzleState.tileSize);
-      const row = Math.floor(y / puzzleState.tileSize);
-      const clickedIndex = row * 4 + col;
+      const index = getIndexFromCoords(x, y);
       
-      // Verificar si el tile clickeado está adyacente al espacio vacío
-      const validMoves = getValidMoves(puzzleState.emptyIndex);
+      // No permitir arrastrar el espacio vacío
+      if (index !== null && puzzleState.tiles[index] !== 15) {
+        puzzleState.draggedIndex = index;
+        puzzleState.canvas.style.cursor = 'grabbing';
+        drawPuzzle();
+      }
+    }
+    
+    function handlePuzzleMouseMove(event) {
+      const rect = puzzleState.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
       
-      // Primer clic: seleccionar pieza
-      if (puzzleState.selectedTile === null) {
-        if (validMoves.includes(clickedIndex)) {
-          puzzleState.selectedTile = clickedIndex;
-          drawPuzzle();
-          highlightSelectedTile();
-        }
-      } 
-      // Segundo clic: mover a destino (debe ser el espacio vacío)
-      else {
-        if (clickedIndex === puzzleState.emptyIndex) {
-          swapTiles(puzzleState.emptyIndex, puzzleState.selectedTile);
-          puzzleState.selectedTile = null;
-          drawPuzzle();
+      const index = getIndexFromCoords(x, y);
+      
+      if (puzzleState.draggedIndex !== null) {
+        puzzleState.hoveredIndex = index;
+        drawPuzzle();
+        
+        // Resaltar el tile sobre el que estamos
+        if (index !== null && index !== puzzleState.draggedIndex) {
+          const ctx = puzzleState.ctx;
+          const tileSize = puzzleState.tileSize;
+          const row = Math.floor(index / 4);
+          const col = index % 4;
           
-          // Verificar si el puzle está resuelto
-          if (isPuzzleSolved()) {
-            puzzleState.canvas.onclick = null;
-            setTimeout(() => {
-              currentGame.score += Math.max(100, 500 - puzzleState.moves * 2);
-              currentGame.correctAnswers++;
-              showFeedback(true, `¡Puzle completado en ${puzzleState.moves} movimientos!`);
-            }, 300);
-          }
-        } else if (validMoves.includes(clickedIndex)) {
-          // Si hace clic en otra pieza válida, cambiar selección
-          puzzleState.selectedTile = clickedIndex;
-          drawPuzzle();
-          highlightSelectedTile();
+          ctx.strokeStyle = '#10b981';
+          ctx.lineWidth = 6;
+          ctx.strokeRect(col * tileSize + 3, row * tileSize + 3, tileSize - 6, tileSize - 6);
+        }
+      } else {
+        // Cambiar cursor según si hay pieza o no
+        if (index !== null && puzzleState.tiles[index] !== 15) {
+          puzzleState.canvas.style.cursor = 'grab';
         } else {
-          // Si hace clic en una pieza no válida, deseleccionar
-          puzzleState.selectedTile = null;
-          drawPuzzle();
+          puzzleState.canvas.style.cursor = 'default';
         }
       }
     }
     
-    function highlightValidMoves() {
-      const ctx = puzzleState.ctx;
-      const tileSize = puzzleState.tileSize;
-      const validMoves = getValidMoves(puzzleState.emptyIndex);
+    function handlePuzzleMouseUp(event) {
+      if (puzzleState.draggedIndex === null) return;
       
-      // Dibujar highlight en las piezas que se pueden mover
-      validMoves.forEach(index => {
-        const row = Math.floor(index / 4);
-        const col = index % 4;
-        
-        ctx.strokeStyle = '#10b981';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(col * tileSize + 2, row * tileSize + 2, tileSize - 4, tileSize - 4);
-      });
-    }
-    
-    function highlightSelectedTile() {
-      if (puzzleState.selectedTile === null) return;
-      
-      const ctx = puzzleState.ctx;
-      const tileSize = puzzleState.tileSize;
-      const row = Math.floor(puzzleState.selectedTile / 4);
-      const col = puzzleState.selectedTile % 4;
-      
-      // Dibujar borde azul grueso en la pieza seleccionada
-      ctx.strokeStyle = '#3b82f6';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(col * tileSize + 3, row * tileSize + 3, tileSize - 6, tileSize - 6);
-      
-      // Dibujar borde verde en el espacio vacío (destino)
-      const emptyRow = Math.floor(puzzleState.emptyIndex / 4);
-      const emptyCol = puzzleState.emptyIndex % 4;
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(emptyCol * tileSize + 3, emptyRow * tileSize + 3, tileSize - 6, tileSize - 6);
-    }
-    
-    function handlePuzzleHover(event) {
       const rect = puzzleState.canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       
-      const col = Math.floor(x / puzzleState.tileSize);
-      const row = Math.floor(y / puzzleState.tileSize);
-      const hoveredIndex = row * 4 + col;
+      const targetIndex = getIndexFromCoords(x, y);
       
-      const validMoves = getValidMoves(puzzleState.emptyIndex);
+      if (targetIndex !== null && targetIndex !== puzzleState.draggedIndex) {
+        // Intercambiar las piezas
+        swapTiles(puzzleState.draggedIndex, targetIndex, true);
+        drawPuzzle();
+        
+        // Verificar si el puzle está resuelto
+        if (isPuzzleSolved()) {
+          puzzleState.canvas.onmousedown = null;
+          puzzleState.canvas.onmousemove = null;
+          puzzleState.canvas.onmouseup = null;
+          puzzleState.canvas.style.cursor = 'default';
+          
+          setTimeout(() => {
+            currentGame.score += Math.max(100, 500 - puzzleState.moves * 2);
+            currentGame.correctAnswers++;
+            showFeedback(true, `¡Puzle completado en ${puzzleState.moves} movimientos!`);
+          }, 300);
+        }
+      }
       
-      // Redibujar el puzle
+      puzzleState.draggedIndex = null;
+      puzzleState.hoveredIndex = null;
+      puzzleState.canvas.style.cursor = 'grab';
       drawPuzzle();
-      
-      // Si ya hay una pieza seleccionada, mostrarla
-      if (puzzleState.selectedTile !== null) {
-        highlightSelectedTile();
-      }
-      // Si no hay pieza seleccionada y está sobre una pieza movible, mostrar hover
-      else if (validMoves.includes(hoveredIndex)) {
-        const ctx = puzzleState.ctx;
-        const tileSize = puzzleState.tileSize;
-        
-        ctx.strokeStyle = '#10b981';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(col * tileSize + 2, row * tileSize + 2, tileSize - 4, tileSize - 4);
-        
-        puzzleState.canvas.style.cursor = 'pointer';
-        return;
-      }
-      
-      // Cambiar cursor según contexto
-      if (puzzleState.selectedTile !== null && hoveredIndex === puzzleState.emptyIndex) {
-        puzzleState.canvas.style.cursor = 'pointer'; // Destino válido
-      } else if (puzzleState.selectedTile !== null && validMoves.includes(hoveredIndex)) {
-        puzzleState.canvas.style.cursor = 'pointer'; // Otra pieza válida
-      } else if (puzzleState.selectedTile === null && validMoves.includes(hoveredIndex)) {
-        puzzleState.canvas.style.cursor = 'pointer'; // Pieza seleccionable
-      } else {
-        puzzleState.canvas.style.cursor = 'default';
-      }
     }
     
     function drawPuzzle() {
@@ -1084,7 +1074,7 @@
         currentGame.correctAnswers++;
       }
       
-      showFeedback(isCorrect, isCorrect ? `¡Correcto! La respuesta era: ${question.correct}` : `La respuesta correcta era: ${question.correct}`);
+      showFeedback(isCorrect, isCorrect ? `��Correcto! La respuesta era: ${question.correct}` : `La respuesta correcta era: ${question.correct}`);
     }
     
     function checkOrder() {
@@ -1293,6 +1283,8 @@
     }
     
     // Funciones de la ruleta
+    let wheelRotation = 0; // Mantener rotación acumulada
+    
     function drawWheel() {
       const wheel = document.getElementById('wheel');
       const categories = ['Quiz', 'V/F', 'Completa', 'Ordena', 'Relaciona', 'Puzle', 'Quiz', 'V/F'];
@@ -1339,7 +1331,8 @@
       spinBtn.disabled = true;
       
       const spins = 5 + Math.random() * 3;
-      const finalRotation = spins * 360 + Math.random() * 360;
+      const additionalRotation = spins * 360 + Math.random() * 360;
+      const finalRotation = wheelRotation + additionalRotation;
       
       wheel.style.setProperty('--final-rotation', `${finalRotation}deg`);
       wheel.classList.remove('wheel-spin');
@@ -1347,6 +1340,10 @@
       wheel.classList.add('wheel-spin');
       
       setTimeout(() => {
+        wheelRotation = finalRotation % 360; // Guardar rotación final normalizada
+        wheel.style.transform = `rotate(${wheelRotation}deg)`; // Fijar posición final
+        wheel.classList.remove('wheel-spin'); // Remover animación
+        
         const normalizedAngle = finalRotation % 360;
         const segmentIndex = Math.floor(normalizedAngle / 45);
         
@@ -1457,5 +1454,5 @@
     // Inicializar
     applyConfig();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c4a4a5df65404ad',t:'MTc2OTUzODMwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c57ef1c15b7f77b',t:'MTc2OTY4MTM2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
