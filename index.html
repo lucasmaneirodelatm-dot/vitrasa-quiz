@@ -342,12 +342,12 @@
         {
           question: "¿En qué año se fundó Vitrasa?",
           options: ["1968", "1982", "1989", "1930"],
-          correct: 1
+          correct: 0
         },
         {
           question: "¿Cuántas líneas de autobús tiene aproximadamente Vitrasa?",
           options: ["100-150", "15-20", "40-45", "Más de 45"],
-          correct: 3
+          correct: 2
         },
         {
           question: "¿Qué significan las siglas VITRASA?",
@@ -357,7 +357,7 @@
         {
           question: "¿Cuál es el color corporativo principal de los autobuses Vitrasa?",
           options: ["Verde-Amarillo-Blanco", "Azul celeste", "Verde-Amarillo", "Blanco"],
-          correct: 1
+          correct: 0
         },
         {
           question: "¿Qué tarjeta se utiliza para pagar en Vitrasa?",
@@ -372,7 +372,7 @@
         {
           question: "¿Cuánta flota de autobuses tienen?",
           options: ["Solo 100", "Solo 200", "130", "150-175"],
-          correct: 3
+          correct: 2
         }
       ],
       truefalse: [
@@ -407,16 +407,16 @@
       ],
       complete: [
         {
-          question: "La empresa Vitrasa se fundó en el año ____",
-          correct: "1982"
+          question: "El C1 empieza en _____ __ _______",
+          correct: "plaza de américa"
         },
         {
-          question: "El color corporativo de Vitrasa es ____",
-          correct: "verde"
+          question: "El __ amplia al VAO en verano y aa las 8:15",
+          correct: "4C"
         },
         {
-          question: "Vitrasa opera principalmente en la ciudad de ____",
-          correct: "vigo"
+          question: "Vitrasa tiene cocheras en _______ __ ___________, 36",
+          correct: "estrada de camposancos"
         }
       ],
       order: [
@@ -424,6 +424,21 @@
           question: "Ordena cronológicamente estos hitos de Vitrasa:",
           items: ["Fundación de Vitrasa", "Incorporación de buses híbridos", "Ampliación al H. Álvaro Cunqueiro", "Expansión a zonas metropolitanas"],
           correct: [0, 3, 2, 1]
+        },
+       {
+          question: "Ordena estos modelos de autobuses de menor a mayor edad",
+          items: ["MAN", "Castrosua", "Volvo", "Solaris"],
+          correct: [0, 2, 3, 1]
+        },
+       {
+          question: "Ordena cronológicamente estas pardas del C1:",
+          items: ["Berbés", "Plaza de España", "P. Sanz", "Plaza de América"],
+          correct: [3, 0, 2, 1]
+        },
+       {
+          question: "Ordena estas líneas de Vitrasa:La primera la que antes empieze y la última la que  empiece a circular más tarde",
+          items: ["PSA-1", "C3.D", "15C", "C3.I"],
+          correct: [0, 3, 1, 2]
         }
       ],
       match: [
@@ -447,6 +462,17 @@
             { left: "Parada", right: "Lugar que la gente espera el bus" },
             { left: "Horario", right: "Programa de salidas y llegadas" },
             { left: "Refuerzo", right: "Bus extra para abastecer zonas con mucha demanda" }
+          ]
+        },
+        {
+          question: "Relaciona cada playa con el servicio que tienen en Verano",
+          pairs: [
+            { left: "Patos (Nigrán)", right: "Ninguna línea" },
+            { left: "Bouzas", right: "Ambos C3 y 13" },
+            { left: "Alcabre", right: "10, R10, 15B, 15C y R15" },
+            { left: "Samil", right: "Ambos C3, 4C (Avda. Europa), 10, R10, C15(Todos y sus refuerzos) y 23" },
+            { left: "Vao", right: "4C, 10, R10, 11 y R11" },
+            { left: "Ninguna", right: "6, 7, 11 y R11" }
           ]
         }
       ],
