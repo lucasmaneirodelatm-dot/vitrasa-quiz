@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vitrasa Quiz Multijuego</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
     body {
@@ -63,6 +61,8 @@
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white overflow-auto">
   <div id="app" class="min-h-full w-full"><!-- Pantalla Principal -->
@@ -156,7 +156,7 @@
      </div><!-- Opciones Quiz -->
      <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
      </div><!-- Opciones V/F -->
-     <div id="tf-options" class="hidden flex justify-center gap-6"><button onclick="answerTF(true)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-2xl text-2xl font-bold transition-all transform"> ✓ Verdadero </button> <button onclick="answerTF(false)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 rounded-2xl text-2xl font-bold transition-all transform"> ✗ Falso </button>
+     <div id="tf-options" class="hidden flex justify-center gap-6"><button onclick="answerTF(true)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-2xl text-2xl font-bold transition-all transform"> ��� Verdadero </button> <button onclick="answerTF(false)" class="option-btn flex-1 max-w-xs py-6 bg-gradient-to-br from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 rounded-2xl text-2xl font-bold transition-all transform"> ✗ Falso </button>
      </div><!-- Completa la Frase -->
      <div id="complete-options" class="hidden flex flex-col items-center gap-4"><input type="text" id="complete-input" placeholder="Escribe tu respuesta aquí..." class="w-full max-w-md px-6 py-4 bg-slate-700 border-2 border-slate-600 rounded-xl text-xl text-center focus:outline-none focus:border-purple-500 transition-colors"> <button onclick="answerComplete()" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 rounded-xl text-xl font-bold transition-all"> Comprobar Respuesta </button>
      </div><!-- Ordena Elementos -->
@@ -206,7 +206,7 @@
        <p class="text-sm text-slate-400">Aciertos</p>
       </div>
      </div>
-     <div class="flex flex-col gap-3"><button onclick="restartGame()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-xl font-semibold transition-all"> 🔄 Jugar de Nuevo </button> <button onclick="backToMenu()" class="w-full py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold transition-all"> 🏠 Volver al Menú </button>
+     <div class="flex flex-col gap-3"><button onclick="restartGame()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-xl font-semibold transition-all"> ��� Jugar de Nuevo </button> <button onclick="backToMenu()" class="w-full py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold transition-all"> 🏠 Volver al Menú </button>
      </div>
     </div>
    </div><!-- Panel Admin -->
@@ -305,6 +305,33 @@
     
     let config = { ...defaultConfig };
     let gameHistory = [];
+    
+    // Cargar historial desde localStorage
+    function loadHistory() {
+      try {
+        const stored = localStorage.getItem('vitrasa_quiz_history');
+        if (stored) {
+          gameHistory = JSON.parse(stored);
+          updateStatsDisplay();
+        }
+      } catch (error) {
+        console.error('Error loading history:', error);
+        gameHistory = [];
+      }
+    }
+    
+    // Guardar historial en localStorage
+    function saveHistory() {
+      try {
+        localStorage.setItem('vitrasa_quiz_history', JSON.stringify(gameHistory));
+        updateStatsDisplay();
+      } catch (error) {
+        console.error('Error saving history:', error);
+      }
+    }
+    
+    // Cargar historial al iniciar
+    loadHistory();
     
     // URL del JSON con las preguntas - CAMBIA ESTA URL POR LA TUYA
     const QUESTIONS_JSON_URL = 'https://tu-servidor.com/preguntas-vitrasa.json';
@@ -457,56 +484,6 @@
       timer: null,
       timeLeft: 10
     };
-    
-    // Inicializar SDK de elementos
-    window.elementSdk.init({
-      defaultConfig,
-      onConfigChange: async (newConfig) => {
-        config = { ...config, ...newConfig };
-        applyConfig();
-      },
-      mapToCapabilities: (cfg) => ({
-        recolorables: [
-          {
-            get: () => cfg.background_color || defaultConfig.background_color,
-            set: (v) => window.elementSdk.setConfig({ background_color: v })
-          },
-          {
-            get: () => cfg.surface_color || defaultConfig.surface_color,
-            set: (v) => window.elementSdk.setConfig({ surface_color: v })
-          },
-          {
-            get: () => cfg.text_color || defaultConfig.text_color,
-            set: (v) => window.elementSdk.setConfig({ text_color: v })
-          },
-          {
-            get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
-            set: (v) => window.elementSdk.setConfig({ primary_action_color: v })
-          },
-          {
-            get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
-            set: (v) => window.elementSdk.setConfig({ secondary_action_color: v })
-          }
-        ],
-        borderables: [],
-        fontEditable: undefined,
-        fontSizeable: undefined
-      }),
-      mapToEditPanelValues: (cfg) => new Map([
-        ['main_title', cfg.main_title || defaultConfig.main_title],
-        ['subtitle', cfg.subtitle || defaultConfig.subtitle]
-      ])
-    });
-    
-    // Inicializar Data SDK
-    const dataHandler = {
-      onDataChanged(data) {
-        gameHistory = data;
-        updateStatsDisplay();
-      }
-    };
-    
-    window.dataSdk.init(dataHandler);
     
     // Cargar preguntas desde la URL al iniciar
     async function loadQuestionsFromURL() {
@@ -1234,15 +1211,16 @@
     async function endGame() {
       document.getElementById('progress-bar').style.width = '100%';
       
-      // Guardar resultado
+      // Guardar resultado en localStorage
       if (gameHistory.length < 999) {
-        await window.dataSdk.create({
+        gameHistory.push({
           game_type: currentGame.type,
           score: currentGame.score,
           total_questions: currentGame.questions.length,
           correct_answers: currentGame.correctAnswers,
           played_at: new Date().toISOString()
         });
+        saveHistory();
       }
       
       // Mostrar resultados
@@ -1454,5 +1432,5 @@
     // Inicializar
     applyConfig();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c57ef1c15b7f77b',t:'MTc2OTY4MTM2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c60668fd101cbb3',t:'MTc2OTc3MDE0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
